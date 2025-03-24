@@ -1,0 +1,32 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pix2Pix Loss Variations</title>
+    <style>
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px; text-align: center; }
+        img { width: 256px; height: 256px; }
+    </style>
+</head>
+<body>
+    <h2>Comparison of Different Loss Variations</h2>
+    <table border="1">
+        <tr>
+            <th>Input</th>
+            <th>Ground Truth</th>
+            <th>L1 Loss</th>
+            <th>cGAN Loss</th>
+            <th>L1 + cGAN</th>
+        </tr>
+        <tr>
+            <td><img src="input_sample.jpg"></td>
+            <td><img src="ground_truth.jpg"></td>
+            <td><img src="generated_L1.png"></td>
+            <td><img src="generated_cGAN.png"></td>
+            <td><img src="generated_L1+cGAN.png"></td>
+        </tr>
+    </table>
+</body>
+</html>

@@ -1,0 +1,5 @@
+datasets/
+kaggledatasets/
+venv/
+checkpoints/
+**__pycaches__**
