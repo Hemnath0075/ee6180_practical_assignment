@@ -3,3 +3,6 @@ kaggledatasets/
 venv/
 checkpoints/
 **__pycaches__**
+training_checkpoints
+virtualenv
+logs
