@@ -4,6 +4,16 @@ import os
 from model import Pix2Pix
 from preprocess import load_dataset
 from utils import save_images, create_output_dir
+import sys
+import logging
+from datetime import datetime
+
+
+timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+filename = f'model_logs/pix2pix_{timestamp}.txt'
+
+# Set up logging with the timestamped filename
+logging.basicConfig(filename=filename, level=logging.INFO, format='%(asctime)s - %(message)s')
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Train Pix2Pix model.')
@@ -17,6 +27,20 @@ def parse_args():
 
 def main():
     args = parse_args()
+
+    gpus = tf.config.list_physical_devices('GPU')
+
+    tf.config.set_visible_devices(gpus[3], 'GPU')
+    # tf.config.experimental.set_memory_growth(gpus[3], True)
+
+    # # === Create logs folder and log file ===
+    # os.makedirs('model_logs', exist_ok=True)
+    # timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
+    # log_filename = os.path.join('logs', f'training_{timestamp}.log')
+    # sys.stdout = open(log_filename, 'w')
+    # sys.stderr = sys.stdout  # Redirect stderr as well
+
+    # print(f"Logging to {log_filename}")
 
     # Create output directory
     create_output_dir(args.output_dir)
@@ -34,12 +58,12 @@ def main():
 
     # Training loop
     for epoch in range(args.epochs):
-        print(f'Epoch {epoch + 1}/{args.epochs}')
+        logging.info(f'Epoch {epoch + 1}/{args.epochs}')
         for step, (input_image, target) in enumerate(train_dataset):
             pix2pix.train_step(input_image, target)
 
             if step % 100 == 0:
-                print(f'Step {step}')
+                logging.info(f'Step {step}')
 
         # Generate and save sample images every 10 epochs
         if (epoch + 1) % 10 == 0:

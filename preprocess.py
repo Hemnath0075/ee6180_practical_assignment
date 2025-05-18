@@ -1,5 +1,6 @@
 import tensorflow as tf
 import os
+from PIL import Image
 
 def load_image(image_path, image_size):
     img = tf.io.read_file(image_path)
@@ -10,12 +11,25 @@ def load_image(image_path, image_size):
     return img
 
 def load_image_pair(image_path, image_size):
-    # Assume dataset has paired images side-by-side (input | target)
-    img = load_image(image_path, image_size)
-    w = tf.shape(img)[1]
-    w = w // 2
-    input_image = img[:, :w, :]
-    target_image = img[:, w:, :]
+    # Load image from file (512 x 256)
+    img = tf.io.read_file(image_path)
+    img = tf.image.decode_jpeg(img, channels=3)
+    img = tf.cast(img, tf.float32)
+    img = (img / 127.5) - 1  # Normalize to [-1, 1]
+
+    # Split into left and right halves
+    w = tf.shape(img)[1] // 2
+    left_half = img[:, :w, :]      # Left half (ground truth)
+    right_half = img[:, w:, :]     # Right half (segmented image)
+
+    # Resize each to (image_size, image_size)
+    left_half = tf.image.resize(left_half, [image_size, image_size])
+    right_half = tf.image.resize(right_half, [image_size, image_size])
+
+    # Here we swap roles: right_half becomes input, left_half is the target
+    input_image = right_half
+    target_image = left_half
+
     return input_image, target_image
 
 def augment(input_image, target_image):
